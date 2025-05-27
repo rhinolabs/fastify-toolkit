@@ -10,12 +10,7 @@
     "lint:fix": "biome check . --fix --unsafe",
     "format": "biome format . --fix"
   },
-  "keywords": [
-    "fastify",
-    "toolkit",
-    "plugins",
-    "utilities"
-  ],
+  "keywords": ["fastify", "toolkit", "plugins", "utilities"],
   "author": "RhinoLabs",
   "license": "MIT",
   "engines": {
