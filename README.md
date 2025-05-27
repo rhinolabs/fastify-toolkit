@@ -1,45 +1,45 @@
 # @rhinolabs/fastify-toolkit
 
-A collection of tools and utilities for Fastify applications, built with modern ESM, TypeScript, and best practices.
+High-quality tools and plugins for Fastify applications, built with modern TypeScript.
 
 ## Packages
 
-<!-- Lista de paquetes que se añadirán próximamente -->
+### [@rhinolabs/fastify-dev-performance](./packages/dev-performance)
 
-## Features
+Development performance monitoring plugin that tracks request timing and identifies slow endpoints.
 
-- 📦 Modern ESM-only packages
-- 🔒 Type-safe with TypeScript
-- 🧪 Well-tested with comprehensive test suites
-- 📚 Thorough documentation and examples
-- 🚀 Built for performance and developer experience
+```bash
+npm install @rhinolabs/fastify-dev-performance
+```
 
-## Getting Started
+**Features:**
+- Alerts on slow endpoints (>1000ms)
+- Critical issue detection (>3000ms)  
+- Zero configuration required
 
-Each package in this toolkit can be used independently. Check out the README in each package directory for specific installation and usage instructions.
+## Philosophy
+
+- **Zero Config First** - Works out of the box
+- **Development Focused** - Improves developer experience
+- **TypeScript Native** - Full type safety
+- **Performance Conscious** - No production overhead
 
 ## Development
 
-This project uses pnpm workspaces for package management:
-
 ```bash
-# Install dependencies
-pnpm install
-
-# Build all packages
-pnpm build
-
-# Run tests
-pnpm test
-
-# Run linting
-pnpm lint
+pnpm install    # Install dependencies
+pnpm build      # Build all packages
+pnpm lint       # Lint all packages
 ```
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Read our [Contributing Guide](./CONTRIBUTING.md) for pull request and issue guidelines.
+
+## Related
+
+- [@rhinolabs/boilr](https://github.com/rhinolabs/boilr) - Convention-based Fastify framework
 
 ## License
 
-MIT
+MIT License - see [LICENSE](./LICENSE) for details.
