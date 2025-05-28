@@ -149,5 +149,5 @@ async function devPerformancePlugin(fastify: FastifyInstance, options: DevPerfor
  */
 export default fp<DevPerformanceOptions>(devPerformancePlugin, {
   fastify: "5.x",
-  name: "@rhinolabs/fastify-dev-performance",
+  name: "@rhinolabs/fastify-monitor",
 });

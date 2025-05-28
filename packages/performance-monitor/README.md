@@ -1,9 +1,9 @@
-# @rhinolabs/fastify-dev-performance
+# @rhinolabs/fastify-monitor
 
 Development performance monitoring plugin for Fastify applications. Automatically tracks request timing, identifies slow endpoints, and provides actionable insights during development.
 
 <p align="center">
-  <img src="https://img.shields.io/npm/v/@rhinolabs/fastify-dev-performance" alt="npm version">
+  <img src="https://img.shields.io/npm/v/@rhinolabs/fastify-monitor" alt="npm version">
   <img src="https://img.shields.io/github/license/rhinolabs/fastify-toolkit" alt="license">
   <img src="https://img.shields.io/github/stars/rhinolabs/fastify-toolkit" alt="github stars">
 </p>
@@ -19,11 +19,11 @@ Development performance monitoring plugin for Fastify applications. Automaticall
 ## Installation
 
 ```bash
-npm install @rhinolabs/fastify-dev-performance
+npm install @rhinolabs/fastify-monitor
 
 # Or using other package managers
-pnpm add @rhinolabs/fastify-dev-performance
-yarn add @rhinolabs/fastify-dev-performance
+pnpm add @rhinolabs/fastify-monitor
+yarn add @rhinolabs/fastify-monitor
 ```
 
 ## Quick Start
@@ -32,7 +32,7 @@ yarn add @rhinolabs/fastify-dev-performance
 
 ```typescript
 import Fastify from 'fastify';
-import devPerformance from '@rhinolabs/fastify-dev-performance';
+import devPerformance from '@rhinolabs/fastify-monitor';
 
 const fastify = Fastify({
   logger: true
@@ -132,7 +132,7 @@ The plugin works out of the box with smart defaults, but you can customize its b
 
 ```typescript
 import Fastify from 'fastify';
-import devPerformance from '@rhinolabs/fastify-dev-performance';
+import devPerformance from '@rhinolabs/fastify-monitor';
 
 const fastify = Fastify();
 
@@ -225,9 +225,9 @@ const morgan = require('morgan');
 const app = express();
 app.use(morgan('combined'));
 
-// After (Fastify with dev-performance)
+// After (Fastify with performance monitor)
 import Fastify from 'fastify';
-import devPerformance from '@rhinolabs/fastify-dev-performance';
+import devPerformance from '@rhinolabs/fastify-monitor';
 
 const fastify = Fastify();
 await fastify.register(devPerformance);
@@ -236,7 +236,7 @@ await fastify.register(devPerformance);
 ### Existing Fastify Apps
 ```typescript
 // Add to existing Fastify applications
-import devPerformance from '@rhinolabs/fastify-dev-performance';
+import devPerformance from '@rhinolabs/fastify-monitor';
 
 // Register alongside other plugins
 await fastify.register(require('@fastify/cors'));
@@ -255,7 +255,7 @@ Full TypeScript support with complete type definitions:
 import type { FastifyInstance } from 'fastify';
 import devPerformance, { 
   type DevPerformanceOptions 
-} from '@rhinolabs/fastify-dev-performance';
+} from '@rhinolabs/fastify-monitor';
 
 // Fully typed configuration
 const options: DevPerformanceOptions = {

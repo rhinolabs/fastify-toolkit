@@ -14,9 +14,9 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
-      - name: Draft dev-performance release
+      - name: Draft performance-monitor release
         uses: release-drafter/release-drafter@v6
         with:
-          config-name: release-drafter-dev-performance.yml
+          config-name: release-drafter-performance-monitor.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

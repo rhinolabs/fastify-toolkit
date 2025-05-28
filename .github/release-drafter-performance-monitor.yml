@@ -1,0 +1,6 @@
+_extends: fastify-toolkit:.github/release-drafter-base.yml
+name-template: 'performance-monitor@$RESOLVED_VERSION'
+tag-template: 'performance-monitor@$RESOLVED_VERSION'
+tag-prefix: 'performance-monitor@'
+include-paths:
+  - "packages/performance-monitor/"

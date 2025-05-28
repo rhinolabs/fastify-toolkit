@@ -5,8 +5,8 @@ on:
     types: [published]
 
 jobs:
-  publish-dev-performance:
-    if: startsWith(github.event.release.tag_name, 'dev-performance@')
+  publish-performance-monitor:
+    if: startsWith(github.event.release.tag_name, 'performance-monitor@')
     runs-on: ubuntu-latest
     steps:
       - name: 🛠 Checkout code
@@ -26,29 +26,29 @@ jobs:
 
       - name: 🏷️ Get version from release
         id: get_version
-        run: echo "VERSION=$(echo ${{ github.event.release.tag_name }} | sed 's/dev-performance@//')" >> $GITHUB_OUTPUT
+        run: echo "VERSION=$(echo ${{ github.event.release.tag_name }} | sed 's/performance-monitor@//')" >> $GITHUB_OUTPUT
 
       - name: 🔄 Update package version
-        run: npx tsx scripts/version.ts dev-performance ${{ steps.get_version.outputs.VERSION }}
+        run: npx tsx scripts/version.ts performance-monitor ${{ steps.get_version.outputs.VERSION }}
 
       - name: 📦 Install dependencies
         run: pnpm install
 
-      - name: 🛠️ Build dev-performance package
-        run: pnpm --filter @rhinolabs/fastify-dev-performance build
+      - name: 🛠️ Build performance-monitor package
+        run: pnpm --filter @rhinolabs/fastify-monitor build
 
       - name: ✏️ Fix linting issues
         run: pnpm lint:fix
 
-      - name: 📢 Publish dev-performance package
-        run: cd packages/dev-performance && npm publish --access public
+      - name: 📢 Publish performance-monitor package
+        run: cd packages/performance-monitor && npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: 💾 Commit version changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Bump @rhinolabs/fastify-dev-performance version to ${{ steps.get_version.outputs.VERSION }}"
-          file_pattern: 'packages/dev-performance/package.json pnpm-lock.yaml'
+          commit_message: "Bump @rhinolabs/fastify-monitor version to ${{ steps.get_version.outputs.VERSION }}"
+          file_pattern: 'packages/performance-monitor/package.json pnpm-lock.yaml'
           branch: main
           push_options: '--force'

@@ -1,6 +1,0 @@
-_extends: fastify-toolkit:.github/release-drafter-base.yml
-name-template: 'dev-performance@$RESOLVED_VERSION'
-tag-template: 'dev-performance@$RESOLVED_VERSION'
-tag-prefix: 'dev-performance@'
-include-paths:
-  - "packages/dev-performance/"

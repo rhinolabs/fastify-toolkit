@@ -4,12 +4,12 @@ High-quality tools and plugins for Fastify applications, built with modern TypeS
 
 ## Packages
 
-### [@rhinolabs/fastify-dev-performance](./packages/dev-performance)
+### [@rhinolabs/fastify-monitor](./packages/performance-monitor)
 
 Development performance monitoring plugin that tracks request timing and identifies slow endpoints.
 
 ```bash
-npm install @rhinolabs/fastify-dev-performance
+npm install @rhinolabs/fastify-monitor
 ```
 
 **Features:**
