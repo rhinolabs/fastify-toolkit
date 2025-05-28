@@ -11,13 +11,13 @@ export interface DevPerformanceOptions {
    * @default []
    */
   excludePaths?: (string | RegExp)[];
-  
+
   /**
    * Threshold in milliseconds for slow request logging
    * @default 1000
    */
   slowThreshold?: number;
-  
+
   /**
    * Threshold in milliseconds for very slow request logging
    * @default 3000
@@ -35,11 +35,11 @@ export interface DevPerformanceOptions {
 function wildcardToRegExp(pattern: string): RegExp {
   // Escape special regex characters except * and **
   const escaped = pattern
-    .replace(/[.+?^${}()|[\]\\]/g, '\\$&')
-    .replace(/\*\*/g, '___DOUBLE_STAR___')
-    .replace(/\*/g, '[^/]*')
-    .replace(/___DOUBLE_STAR___/g, '.*');
-  
+    .replace(/[.+?^${}()|[\]\\]/g, "\\$&")
+    .replace(/\*\*/g, "___DOUBLE_STAR___")
+    .replace(/\*/g, "[^/]*")
+    .replace(/___DOUBLE_STAR___/g, ".*");
+
   return new RegExp(`^${escaped}$`);
 }
 
@@ -47,10 +47,10 @@ function wildcardToRegExp(pattern: string): RegExp {
  * Check if a path should be excluded from monitoring
  */
 function shouldExcludePath(url: string, excludePaths: (string | RegExp)[]): boolean {
-  return excludePaths.some(pattern => {
-    if (typeof pattern === 'string') {
+  return excludePaths.some((pattern) => {
+    if (typeof pattern === "string") {
       // Check for wildcards
-      if (pattern.includes('*')) {
+      if (pattern.includes("*")) {
         const regex = wildcardToRegExp(pattern);
         return regex.test(url);
       }
@@ -85,12 +85,12 @@ async function devPerformancePlugin(fastify: FastifyInstance, options: DevPerfor
   // Track request start time
   fastify.addHook("onRequest", async (request: FastifyRequest) => {
     totalRequests++;
-    
+
     // Check if this path should be excluded
     const shouldExclude = shouldExcludePath(request.url, config.excludePaths);
     (request as FastifyRequest & { startTime: number; shouldExclude: boolean }).startTime = Date.now();
     (request as FastifyRequest & { startTime: number; shouldExclude: boolean }).shouldExclude = shouldExclude;
-    
+
     if (!shouldExclude) {
       monitoredRequests++;
     }
@@ -99,12 +99,12 @@ async function devPerformancePlugin(fastify: FastifyInstance, options: DevPerfor
   // Log performance metrics on response
   fastify.addHook("onResponse", async (request: FastifyRequest, reply: FastifyReply) => {
     const requestWithTiming = request as FastifyRequest & { startTime: number; shouldExclude: boolean };
-    
+
     // Skip logging for excluded paths
     if (requestWithTiming.shouldExclude) {
       return;
     }
-    
+
     const duration = Date.now() - requestWithTiming.startTime;
     const method = request.method;
     const url = request.url;
@@ -137,7 +137,9 @@ async function devPerformancePlugin(fastify: FastifyInstance, options: DevPerfor
   // Log performance summary when the server is ready
   fastify.ready(() => {
     console.log("📊 Development performance monitoring enabled");
-    console.log(`   Monitoring thresholds: >${config.slowThreshold}ms (slow), >${config.verySlowThreshold}ms (very slow)`);
+    console.log(
+      `   Monitoring thresholds: >${config.slowThreshold}ms (slow), >${config.verySlowThreshold}ms (very slow)`,
+    );
   });
 }
 
