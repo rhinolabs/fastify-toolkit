@@ -4,7 +4,7 @@ Development performance monitoring plugin for Fastify applications. Automaticall
 
 <p align="center">
   <img src="https://img.shields.io/npm/v/@rhinolabs/fastify-dev-performance" alt="npm version">
-  <img src="https://img.shields.io/npm/l/@rhinolabs/fastify-dev-performance" alt="license">
+  <img src="https://img.shields.io/github/license/rhinolabs/fastify-toolkit" alt="license">
   <img src="https://img.shields.io/github/stars/rhinolabs/fastify-toolkit" alt="github stars">
 </p>
 
@@ -220,13 +220,3 @@ addDevPerformanceMonitoring(fastify);
 ## Contributing
 
 Contributions are welcome! Please read our [contributing guide](../../CONTRIBUTING.md) for details.
-
-## License
-
-MIT License - see [LICENSE](../../LICENSE) for details.
-
----
-
-<p align="center">
-  <strong>Built with ❤️ by <a href="https://github.com/rhinolabs">RhinoLabs</a></strong>
-</p>
