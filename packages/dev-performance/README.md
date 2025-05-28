@@ -13,6 +13,8 @@ Development performance monitoring plugin for Fastify applications. Automaticall
 - **🐌 Spot Slow Endpoints** - Automatically alerts you when requests take longer than 1000ms
 - **🚨 Critical Issue Detection** - Detailed analysis for requests over 3000ms that need immediate attention
 - **🚀 Zero Setup** - Just install and register - no configuration needed
+- **🎯 Flexible Filtering** - Exclude paths with exact matches, wildcards, or RegExp patterns
+- **⚙️ Configurable** - Customize thresholds and exclusion patterns
 
 ## Installation
 
@@ -48,20 +50,6 @@ fastify.get('/api/users', async (request, reply) => {
 await fastify.listen({ port: 3000 });
 ```
 
-### Manual Registration
-
-```typescript
-import Fastify from 'fastify';
-import { addDevPerformanceMonitoring } from '@rhinolabs/fastify-dev-performance';
-
-const fastify = Fastify();
-
-// Add performance monitoring manually
-addDevPerformanceMonitoring(fastify);
-
-await fastify.listen({ port: 3000 });
-```
-
 ## Usage with Boilr Framework
 
 If you're using [@rhinolabs/boilr](https://github.com/rhinolabs/boilr), performance monitoring is automatically included:
@@ -83,7 +71,6 @@ await app.start();
 ### Startup Summary
 ```bash
 📊 Development performance monitoring enabled
-   Routes registered: 12
    Monitoring thresholds: >1000ms (slow), >3000ms (very slow)
 ```
 
@@ -139,13 +126,92 @@ In production, staging, or test environments, the plugin does nothing, ensuring 
 
 ## Configuration
 
-The plugin works without configuration, but you can customize behavior:
+The plugin works out of the box with smart defaults, but you can customize its behavior:
+
+### Basic Configuration
 
 ```typescript
-// Custom thresholds (not yet implemented - coming soon)
+import Fastify from 'fastify';
+import devPerformance from '@rhinolabs/fastify-dev-performance';
+
+const fastify = Fastify();
+
 await fastify.register(devPerformance, {
-  slowThreshold: 2000,    // Custom slow request threshold
-  verySlowThreshold: 5000 // Custom very slow threshold
+  // Custom performance thresholds
+  slowThreshold: 2000,        // Log slow requests after 2000ms (default: 1000ms)
+  verySlowThreshold: 5000,    // Log very slow requests after 5000ms (default: 3000ms)
+});
+```
+
+### Path Exclusion
+
+The plugin monitors all requests by default. You can exclude specific paths using various patterns:
+
+```typescript
+await fastify.register(devPerformance, {
+  excludePaths: [
+    // Exact path matches
+    '/health',
+    '/favicon.ico',
+    
+    // Wildcard patterns
+    '/docs/*',              // Excludes /docs/api, /docs/guide, etc.
+    '/static/*',            // Excludes all files in /static/
+    '/api/*/internal',      // Excludes /api/v1/internal, /api/v2/internal, etc.
+    
+    // RegExp patterns for complex matching
+    /\.(js|css|png|jpg)$/,  // Excludes files with these extensions
+    /^\/admin\//,           // Excludes all paths starting with /admin/
+  ],
+});
+```
+
+### Wildcard Pattern Examples
+
+| Pattern | Matches | Doesn't Match |
+|---------|---------|---------------|
+| `/docs/*` | `/docs/api`, `/docs/guide` | `/docs/api/users`, `/docs` |
+| `/static/**` | `/static/js/app.js`, `/static/css/style.css` | `/api/static` |
+| `/api/*/internal` | `/api/v1/internal`, `/api/v2/internal` | `/api/v1/internal/users` |
+| `*.json` | `config.json`, `data.json` | `/api/config.json` |
+
+**Note**: Use `*` to match anything except slashes, `**` to match anything including slashes.
+
+### Complete Configuration Example
+
+```typescript
+await fastify.register(devPerformance, {
+  // Performance thresholds
+  slowThreshold: 1500,
+  verySlowThreshold: 4000,
+  
+  // Path exclusions - mix of exact matches, wildcards, and RegExp
+  excludePaths: [
+    // Health and monitoring endpoints
+    '/health',
+    '/ready',
+    '/metrics',
+    
+    // Documentation and admin panels
+    '/docs/*',
+    '/admin/*',
+    '/swagger/*',
+    
+    // Static assets using wildcards
+    '/static/*',
+    '/assets/*',
+    '/uploads/*',
+    
+    // API patterns
+    '/api/*/internal',      // Internal APIs for any version
+    '/api/v*/health',       // Health checks for versioned APIs
+    
+    // File extensions using RegExp
+    /\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|pdf|zip)$/,
+    
+    // Complex patterns
+    /^\/webhooks\//,        // All webhook endpoints
+  ],
 });
 ```
 
@@ -187,14 +253,22 @@ Full TypeScript support with complete type definitions:
 
 ```typescript
 import type { FastifyInstance } from 'fastify';
-import devPerformance, { addDevPerformanceMonitoring } from '@rhinolabs/fastify-dev-performance';
+import devPerformance, { 
+  type DevPerformanceOptions 
+} from '@rhinolabs/fastify-dev-performance';
 
-// Both approaches are fully typed
+// Fully typed configuration
+const options: DevPerformanceOptions = {
+  slowThreshold: 2000,
+  verySlowThreshold: 5000,
+  excludePaths: [
+    '/health',
+    /^\/api\/internal\//,
+  ],
+};
+
 const fastify: FastifyInstance = Fastify();
-await fastify.register(devPerformance);
-
-// Or manual registration
-addDevPerformanceMonitoring(fastify);
+await fastify.register(devPerformance, options);
 ```
 
 ## Best Practices

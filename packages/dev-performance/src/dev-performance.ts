@@ -2,37 +2,121 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
 
 /**
+ * Options for development performance monitoring
+ */
+export interface DevPerformanceOptions {
+  /**
+   * Paths to exclude from performance monitoring
+   * Supports exact strings, wildcards, and RegExp patterns
+   * @default []
+   */
+  excludePaths?: (string | RegExp)[];
+  
+  /**
+   * Threshold in milliseconds for slow request logging
+   * @default 1000
+   */
+  slowThreshold?: number;
+  
+  /**
+   * Threshold in milliseconds for very slow request logging
+   * @default 3000
+   */
+  verySlowThreshold?: number;
+}
+
+/**
+ * Convert a wildcard pattern to RegExp
+ * Examples:
+ * - "/docs/star" becomes ^\/docs\/.*$
+ * - "/api/star/internal" becomes ^\/api\/[^\/]*\/internal$
+ * Note: star represents * wildcard
+ */
+function wildcardToRegExp(pattern: string): RegExp {
+  // Escape special regex characters except * and **
+  const escaped = pattern
+    .replace(/[.+?^${}()|[\]\\]/g, '\\$&')
+    .replace(/\*\*/g, '___DOUBLE_STAR___')
+    .replace(/\*/g, '[^/]*')
+    .replace(/___DOUBLE_STAR___/g, '.*');
+  
+  return new RegExp(`^${escaped}$`);
+}
+
+/**
+ * Check if a path should be excluded from monitoring
+ */
+function shouldExcludePath(url: string, excludePaths: (string | RegExp)[]): boolean {
+  return excludePaths.some(pattern => {
+    if (typeof pattern === 'string') {
+      // Check for wildcards
+      if (pattern.includes('*')) {
+        const regex = wildcardToRegExp(pattern);
+        return regex.test(url);
+      }
+      // Exact match
+      return url === pattern;
+    }
+    // RegExp pattern
+    return pattern.test(url);
+  });
+}
+
+/**
  * Performance monitoring for development mode
  * Tracks request timing and logs slow requests
  */
-async function devPerformancePlugin(fastify: FastifyInstance) {
+async function devPerformancePlugin(fastify: FastifyInstance, options: DevPerformanceOptions = {}) {
   // Only run in development
   if (process.env.NODE_ENV !== "development") {
     return;
   }
 
+  // Merge user options with defaults
+  const config: Required<DevPerformanceOptions> = {
+    excludePaths: options.excludePaths || [],
+    slowThreshold: options.slowThreshold ?? 1000,
+    verySlowThreshold: options.verySlowThreshold ?? 3000,
+  };
+
   let totalRequests = 0;
+  let monitoredRequests = 0;
 
   // Track request start time
   fastify.addHook("onRequest", async (request: FastifyRequest) => {
-    (request as FastifyRequest & { startTime: number }).startTime = Date.now();
     totalRequests++;
+    
+    // Check if this path should be excluded
+    const shouldExclude = shouldExcludePath(request.url, config.excludePaths);
+    (request as FastifyRequest & { startTime: number; shouldExclude: boolean }).startTime = Date.now();
+    (request as FastifyRequest & { startTime: number; shouldExclude: boolean }).shouldExclude = shouldExclude;
+    
+    if (!shouldExclude) {
+      monitoredRequests++;
+    }
   });
 
   // Log performance metrics on response
   fastify.addHook("onResponse", async (request: FastifyRequest, reply: FastifyReply) => {
-    const duration = Date.now() - (request as FastifyRequest & { startTime: number }).startTime;
+    const requestWithTiming = request as FastifyRequest & { startTime: number; shouldExclude: boolean };
+    
+    // Skip logging for excluded paths
+    if (requestWithTiming.shouldExclude) {
+      return;
+    }
+    
+    const duration = Date.now() - requestWithTiming.startTime;
     const method = request.method;
     const url = request.url;
     const status = reply.statusCode;
 
-    // Log slow requests (>1000ms)
-    if (duration > 1000) {
+    // Log slow requests
+    if (duration > config.slowThreshold) {
       console.log(`🐌 Slow request: ${method} ${url} → ${status} (${duration}ms)`);
     }
 
-    // Log very slow requests (>3000ms)
-    if (duration > 3000) {
+    // Log very slow requests
+    if (duration > config.verySlowThreshold) {
       console.log("🚨 Very slow request detected!");
       console.log(`   Route: ${method} ${url}`);
       console.log(`   Status: ${status}`);
@@ -52,11 +136,8 @@ async function devPerformancePlugin(fastify: FastifyInstance) {
 
   // Log performance summary when the server is ready
   fastify.ready(() => {
-    const routes = fastify.printRoutes({ commonPrefix: false });
-    const routeCount = (routes.match(/├─/g) || []).length + (routes.match(/└─/g) || []).length;
     console.log("📊 Development performance monitoring enabled");
-    console.log(`   Routes registered: ${routeCount}`);
-    console.log("   Monitoring thresholds: >1000ms (slow), >3000ms (very slow)");
+    console.log(`   Monitoring thresholds: >${config.slowThreshold}ms (slow), >${config.verySlowThreshold}ms (very slow)`);
   });
 }
 
@@ -64,23 +145,7 @@ async function devPerformancePlugin(fastify: FastifyInstance) {
  * Export as Fastify plugin
  * Automatically enabled in development mode
  */
-export default fp(devPerformancePlugin, {
+export default fp<DevPerformanceOptions>(devPerformancePlugin, {
   fastify: "5.x",
   name: "@rhinolabs/fastify-dev-performance",
 });
-
-/**
- * Manual function to add performance monitoring
- * Use this if you want to add it manually instead of automatic registration
- */
-export function addDevPerformanceMonitoring(app: FastifyInstance): void {
-  // Only run in development
-  if (process.env.NODE_ENV !== "development") return;
-
-  app.register(
-    fp(devPerformancePlugin, {
-      fastify: "5.x",
-      name: "@rhinolabs/fastify-dev-performance",
-    }),
-  );
-}
