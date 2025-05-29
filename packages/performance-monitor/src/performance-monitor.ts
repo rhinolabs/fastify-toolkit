@@ -2,7 +2,7 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
 
 /**
- * Options for development performance monitoring
+ * Options for performance monitoring
  */
 export interface PerformanceMonitorOptions {
   /**
@@ -67,10 +67,10 @@ function shouldExcludePath(url: string, excludePaths: (string | RegExp)[]): bool
 }
 
 /**
- * Performance monitoring for development mode
+ * Performance monitoring plugin for Fastify
  * Tracks request timing and logs slow requests
  */
-async function devPerformancePlugin(fastify: FastifyInstance, options: PerformanceMonitorOptions = {}) {
+async function performanceMonitorPlugin(fastify: FastifyInstance, options: PerformanceMonitorOptions = {}) {
   // Merge user options with defaults
   const config: Required<PerformanceMonitorOptions> = {
     exclude: options.exclude || [],
@@ -136,7 +136,7 @@ async function devPerformancePlugin(fastify: FastifyInstance, options: Performan
 
   // Log performance summary when the server is ready
   fastify.ready(() => {
-    console.log("📊 Development performance monitoring enabled");
+    console.log("📊 Performance monitoring enabled");
     console.log(
       `   Monitoring thresholds: >${config.slowThreshold}ms (slow), >${config.verySlowThreshold}ms (very slow)`,
     );
@@ -145,9 +145,9 @@ async function devPerformancePlugin(fastify: FastifyInstance, options: Performan
 
 /**
  * Export as Fastify plugin
- * Automatically enabled in development mode
+ * Can be enabled/disabled via options
  */
-export default fp<PerformanceMonitorOptions>(devPerformancePlugin, {
+export default fp<PerformanceMonitorOptions>(performanceMonitorPlugin, {
   fastify: "5.x",
   name: "@rhinolabs/fastify-monitor",
 });
