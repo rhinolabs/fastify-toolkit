@@ -4,13 +4,17 @@ import fp from "fastify-plugin";
 /**
  * Options for development performance monitoring
  */
-export interface DevPerformanceOptions {
+export interface PerformanceMonitorOptions {
+  /**
+   * Enable or disable performance monitoring
+   */
+  enable?: boolean;
   /**
    * Paths to exclude from performance monitoring
    * Supports exact strings, wildcards, and RegExp patterns
    * @default []
    */
-  excludePaths?: (string | RegExp)[];
+  exclude?: (string | RegExp)[];
 
   /**
    * Threshold in milliseconds for slow request logging
@@ -66,17 +70,13 @@ function shouldExcludePath(url: string, excludePaths: (string | RegExp)[]): bool
  * Performance monitoring for development mode
  * Tracks request timing and logs slow requests
  */
-async function devPerformancePlugin(fastify: FastifyInstance, options: DevPerformanceOptions = {}) {
-  // Only run in development
-  if (process.env.NODE_ENV !== "development") {
-    return;
-  }
-
+async function devPerformancePlugin(fastify: FastifyInstance, options: PerformanceMonitorOptions = {}) {
   // Merge user options with defaults
-  const config: Required<DevPerformanceOptions> = {
-    excludePaths: options.excludePaths || [],
+  const config: Required<PerformanceMonitorOptions> = {
+    exclude: options.exclude || [],
     slowThreshold: options.slowThreshold ?? 1000,
     verySlowThreshold: options.verySlowThreshold ?? 3000,
+    enable: options.enable !== false,
   };
 
   let totalRequests = 0;
@@ -87,7 +87,7 @@ async function devPerformancePlugin(fastify: FastifyInstance, options: DevPerfor
     totalRequests++;
 
     // Check if this path should be excluded
-    const shouldExclude = shouldExcludePath(request.url, config.excludePaths);
+    const shouldExclude = shouldExcludePath(request.url, config.exclude);
     (request as FastifyRequest & { startTime: number; shouldExclude: boolean }).startTime = Date.now();
     (request as FastifyRequest & { startTime: number; shouldExclude: boolean }).shouldExclude = shouldExclude;
 
@@ -147,7 +147,7 @@ async function devPerformancePlugin(fastify: FastifyInstance, options: DevPerfor
  * Export as Fastify plugin
  * Automatically enabled in development mode
  */
-export default fp<DevPerformanceOptions>(devPerformancePlugin, {
+export default fp<PerformanceMonitorOptions>(devPerformancePlugin, {
   fastify: "5.x",
   name: "@rhinolabs/fastify-monitor",
 });
