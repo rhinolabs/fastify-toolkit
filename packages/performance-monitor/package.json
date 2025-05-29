@@ -1,7 +1,7 @@
 {
   "name": "@rhinolabs/fastify-monitor",
   "version": "0.1.0",
-  "description": "Development performance monitoring plugin for Fastify applications",
+  "description": "Performance monitoring plugin for Fastify applications",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

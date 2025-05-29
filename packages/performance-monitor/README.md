@@ -1,6 +1,6 @@
 # @rhinolabs/fastify-monitor
 
-Development performance monitoring plugin for Fastify applications. Automatically tracks request timing, identifies slow endpoints, and provides actionable insights during development.
+Performance monitoring plugin for Fastify applications. Automatically tracks request timing, identifies slow endpoints, and provides actionable insights for your applications.
 
 <p align="center">
   <img src="https://img.shields.io/npm/v/@rhinolabs/fastify-monitor" alt="npm version">
@@ -32,14 +32,14 @@ yarn add @rhinolabs/fastify-monitor
 
 ```typescript
 import Fastify from 'fastify';
-import devPerformance from '@rhinolabs/fastify-monitor';
+import performanceMonitor from '@rhinolabs/fastify-monitor';
 
 const fastify = Fastify({
   logger: true
 });
 
-// Register the plugin - automatically enabled only in development
-await fastify.register(devPerformance);
+// Register the plugin
+await fastify.register(performanceMonitor);
 
 // Add your routes
 fastify.get('/api/users', async (request, reply) => {
@@ -57,7 +57,7 @@ If you're using [@rhinolabs/boilr](https://github.com/rhinolabs/boilr), performa
 ```typescript
 import { createApp } from '@rhinolabs/boilr';
 
-// Performance monitoring is automatically enabled in development
+// Performance monitoring is automatically included
 const app = createApp({
   server: { port: 3000 },
   routes: { dir: './routes' }
@@ -70,7 +70,7 @@ await app.start();
 
 ### Startup Summary
 ```bash
-📊 Development performance monitoring enabled
+📊 Performance monitoring enabled
    Monitoring thresholds: >1000ms (slow), >3000ms (very slow)
 ```
 
@@ -114,16 +114,6 @@ The plugin uses Fastify's hook system to:
 | 🐌 Slow | 1000ms - 3000ms | May need optimization |
 | 🚨 Very Slow | > 3000ms | Critical performance issues |
 
-## Environment Detection
-
-The plugin automatically detects the environment and only activates when:
-
-```bash
-NODE_ENV=development
-```
-
-In production, staging, or test environments, the plugin does nothing, ensuring zero performance overhead.
-
 ## Configuration
 
 The plugin works out of the box with smart defaults, but you can customize its behavior:
@@ -132,11 +122,11 @@ The plugin works out of the box with smart defaults, but you can customize its b
 
 ```typescript
 import Fastify from 'fastify';
-import devPerformance from '@rhinolabs/fastify-monitor';
+import performanceMonitor from '@rhinolabs/fastify-monitor';
 
 const fastify = Fastify();
 
-await fastify.register(devPerformance, {
+await fastify.register(performanceMonitor, {
   // Custom performance thresholds
   slowThreshold: 2000,        // Log slow requests after 2000ms (default: 1000ms)
   verySlowThreshold: 5000,    // Log very slow requests after 5000ms (default: 3000ms)
@@ -148,8 +138,8 @@ await fastify.register(devPerformance, {
 The plugin monitors all requests by default. You can exclude specific paths using various patterns:
 
 ```typescript
-await fastify.register(devPerformance, {
-  excludePaths: [
+await fastify.register(performanceMonitor, {
+  exclude: [
     // Exact path matches
     '/health',
     '/favicon.ico',
@@ -180,13 +170,13 @@ await fastify.register(devPerformance, {
 ### Complete Configuration Example
 
 ```typescript
-await fastify.register(devPerformance, {
+await fastify.register(performanceMonitor, {
   // Performance thresholds
   slowThreshold: 1500,
   verySlowThreshold: 4000,
   
   // Path exclusions - mix of exact matches, wildcards, and RegExp
-  excludePaths: [
+  exclude: [
     // Health and monitoring endpoints
     '/health',
     '/ready',
@@ -227,21 +217,21 @@ app.use(morgan('combined'));
 
 // After (Fastify with performance monitor)
 import Fastify from 'fastify';
-import devPerformance from '@rhinolabs/fastify-monitor';
+import performanceMonitor from '@rhinolabs/fastify-monitor';
 
 const fastify = Fastify();
-await fastify.register(devPerformance);
+await fastify.register(performanceMonitor);
 ```
 
 ### Existing Fastify Apps
 ```typescript
 // Add to existing Fastify applications
-import devPerformance from '@rhinolabs/fastify-monitor';
+import performanceMonitor from '@rhinolabs/fastify-monitor';
 
 // Register alongside other plugins
 await fastify.register(require('@fastify/cors'));
 await fastify.register(require('@fastify/helmet'));
-await fastify.register(devPerformance); // Add performance monitoring
+await fastify.register(performanceMonitor); // Add performance monitoring
 
 // Your existing routes continue to work
 fastify.get('/api/health', healthHandler);
@@ -253,12 +243,12 @@ Full TypeScript support with complete type definitions:
 
 ```typescript
 import type { FastifyInstance } from 'fastify';
-import devPerformance, { 
-  type DevPerformanceOptions 
+import performanceMonitor, { 
+  type PerformanceMonitorOptions 
 } from '@rhinolabs/fastify-monitor';
 
 // Fully typed configuration
-const options: DevPerformanceOptions = {
+const options: PerformanceMonitorOptions = {
   slowThreshold: 2000,
   verySlowThreshold: 5000,
   excludePaths: [
@@ -268,13 +258,13 @@ const options: DevPerformanceOptions = {
 };
 
 const fastify: FastifyInstance = Fastify();
-await fastify.register(devPerformance, options);
+await fastify.register(performanceMonitor, options);
 ```
 
 ## Best Practices
 
 ### Development Workflow
-1. **Start Development Server** with `NODE_ENV=development`
+1. **Start Your Server** with the performance monitor enabled
 2. **Make Requests** to your API endpoints
 3. **Review Console Output** for performance insights
 4. **Optimize Slow Endpoints** highlighted by the plugin
