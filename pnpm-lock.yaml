@@ -15,6 +15,22 @@ importers:
         specifier: ^5.4.2
         version: 5.8.3
 
+  packages/file-routes:
+    dependencies:
+      fastify-plugin:
+        specifier: ^5.0.1
+        version: 5.0.1
+    devDependencies:
+      '@types/node':
+        specifier: ^20.10.5
+        version: 20.17.49
+      fastify:
+        specifier: ^5.3.3
+        version: 5.3.3
+      typescript:
+        specifier: ^5.3.3
+        version: 5.8.3
+
   packages/performance-monitor:
     dependencies:
       fastify-plugin:
