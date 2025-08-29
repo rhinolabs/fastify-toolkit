@@ -1,6 +1,0 @@
-_extends: fastify-toolkit:.github/release-drafter-base.yml
-name-template: 'file-routes@$RESOLVED_VERSION'
-tag-template: 'file-routes@$RESOLVED_VERSION'
-tag-prefix: 'file-routes@'
-include-paths:
-  - "packages/file-routes/"

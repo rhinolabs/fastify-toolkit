@@ -1,18 +1,21 @@
 {
   "name": "@rhinolabs/fastify-toolkit",
-  "private": true,
   "version": "1.0.0",
   "description": "A collection of tools and utilities for Fastify applications",
+  "author": {
+    "name": "Rhinolabs Agency",
+    "email": "hello@rhinolabs.agency",
+    "url": "https://rhinolabs.agency"
+  },
+  "private": true,
   "type": "module",
+  "keywords": ["fastify", "toolkit", "plugins", "utilities"],
   "scripts": {
     "build": "pnpm -r build",
     "lint": "biome check .",
     "lint:fix": "biome check . --fix --unsafe",
     "format": "biome format . --fix"
   },
-  "keywords": ["fastify", "toolkit", "plugins", "utilities"],
-  "author": "RhinoLabs",
-  "license": "MIT",
   "engines": {
     "node": ">=18.0.0"
   },
@@ -20,5 +23,6 @@
     "@biomejs/biome": "^1.9.4",
     "typescript": "^5.4.2"
   },
+  "license": "MIT",
   "packageManager": "pnpm@9.15.0+sha512.76e2379760a4328ec4415815bcd6628dee727af3779aaa4c914e3944156c4299921a89f976381ee107d41f12cfa4b66681ca9c718f0668fa0831ed4c6d8ba56c"
 }

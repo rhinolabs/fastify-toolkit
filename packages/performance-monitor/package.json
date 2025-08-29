@@ -2,17 +2,20 @@
   "name": "@rhinolabs/fastify-monitor",
   "version": "0.2.0",
   "description": "Performance monitoring plugin for Fastify applications",
+  "author": {
+    "name": "Rhinolabs Agency",
+    "email": "hello@rhinolabs.agency",
+    "url": "https://rhinolabs.agency"
+  },
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "keywords": ["fastify", "performance", "monitoring", "development", "plugin"],
   "files": ["dist/**/*"],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch"
   },
-  "keywords": ["fastify", "performance", "monitoring", "development", "plugin"],
-  "author": "RhinoLabs",
-  "license": "MIT",
   "engines": {
     "node": ">=18.0.0"
   },
@@ -26,5 +29,6 @@
   },
   "peerDependencies": {
     "fastify": "^5.0.0"
-  }
+  },
+  "license": "MIT"
 }
